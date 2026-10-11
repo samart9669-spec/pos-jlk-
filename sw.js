@@ -1,7 +1,7 @@
 // service worker: เก็บตัวแอปไว้ในเครื่อง (ใช้ได้ออฟไลน์) + ซิงก์เบื้องหลังบน Android
 importScripts('config.js', 'core.js');
 
-const CACHE = 'moo-prio-pos-v1';
+const CACHE = 'moo-prio-pos-v2';
 const SHELL = ['./', 'index.html', 'app.js', 'core.js', 'config.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => {

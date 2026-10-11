@@ -10,6 +10,7 @@
   let view = 'order';
   let sumDate = POS.bkkDate();
   let wakeLock = null;
+  const done = new Set();           // ขั้นตอนบนเครื่องที่ติ๊กแล้ว (ล้างเมื่อบิลเปลี่ยน)
 
   // ---------- เริ่มต้น ----------
   S = await POS.getSettings();
@@ -40,12 +41,12 @@
       if (!g) { g = { name: m.group, items: [] }; groups.push(g); }
       g.items.push(i);
     });
-    $('#menuWrap').innerHTML = groups.map(g =>
-      `<div class="grp">${esc(g.name)}</div><div class="grid">` +
+    $('#menuWrap').innerHTML = groups.map((g, gi) =>
+      `<div class="grp g${gi % 4}">${esc(g.name)}</div><div class="grid">` +
       g.items.map(i => {
         const m = MENU[i];
-        return `<button class="item" data-i="${i}" id="it${i}"><span class="k">${esc(m.keypad || '?')}</span>` +
-          `<span class="n">${esc(m.name)}</span><span class="p">${baht(m.price)}</span><span class="q"></span></button>`;
+        return `<button class="item g${gi % 4}" data-i="${i}" id="it${i}"><span class="kc">${esc(m.keypad || '?')}</span>` +
+          `<span class="p">${baht(m.price)}</span><span class="n">${esc(m.name)}</span><span class="q"></span></button>`;
       }).join('') + `</div>`).join('');
     syncMenuBadges();
   }
@@ -73,9 +74,11 @@
         `<button class="step" data-d="1" data-i="${e.i}" aria-label="เพิ่ม">+</button>` +
         `<span class="amt">${baht(e.m.price * e.qty)}</span></div>`;
     }).join('');
-    $('#steps').innerHTML = es.map(e =>
-      `<li><span class="kk">${esc(e.m.keypad || '?')}</span><span class="kk e">E</span>${e.qty > 1 ? '<span class="x">×' + e.qty + '</span>' : ''}</li>`).join('') +
-      `<li><span class="kk d">D</span><span class="kk">${pay.n}</span></li>`;
+    const stp = (n, keys, label) =>
+      `<li class="stp${done.has(n) ? ' done' : ''}" data-s="${n}"><span class="sn">${n}</span><span class="row2">${keys}</span><span class="sl">${esc(label)}</span></li>`;
+    $('#steps').innerHTML = es.map((e, n) =>
+      stp(n + 1, `<span class="kc sm">${esc(e.m.keypad || '?')}</span><span class="kc sm e">E</span>${e.qty > 1 ? '<span class="x">×' + e.qty + '</span>' : ''}`, e.m.name)).join('') +
+      stp(es.length + 1, `<span class="kc sm d">D</span><span class="kc sm">${pay.n}</span>`, 'ชำระ ' + pay.name);
     $('#pays').innerHTML = PAYS.map(p =>
       `<button class="pay${p.n === pay.n ? ' on' : ''}" data-n="${p.n}"><b>${p.n}</b>${esc(p.name)}</button>`).join('');
     $('#total').textContent = baht(total);
@@ -84,6 +87,7 @@
     syncMenuBadges();
   }
   function add(i, d) {
+    done.clear();
     const q = (cart.get(i) || 0) + d;
     if (q <= 0) cart.delete(i); else cart.set(i, Math.min(q, 99));
     renderCart();
@@ -100,9 +104,14 @@
   });
   $('#pays').addEventListener('click', e => {
     const b = e.target.closest('.pay'); if (!b) return;
-    pay = PAYS.find(p => p.n === +b.dataset.n); renderCart();
+    pay = PAYS.find(p => p.n === +b.dataset.n); done.clear(); renderCart();
   });
-  $('#clear').addEventListener('click', () => { cart.clear(); renderCart(); });
+  $('#steps').addEventListener('click', e => {
+    const li = e.target.closest('.stp'); if (!li) return;
+    const n = +li.dataset.s; if (done.has(n)) done.delete(n); else done.add(n);
+    li.classList.toggle('done', done.has(n));
+  });
+  $('#clear').addEventListener('click', () => { cart.clear(); done.clear(); renderCart(); });
   $('#save').addEventListener('click', async () => {
     const es = cartEntries(); if (!es.length) return;
     $('#save').disabled = true;
@@ -111,7 +120,7 @@
       lines: es.map(e => ({ keypad: e.m.keypad, code: e.m.code, name: e.m.name, price: e.m.price, qty: e.qty }))
     });
     await POS.kvSet('lastPay', pay.n);
-    cart.clear(); renderCart();
+    cart.clear(); done.clear(); renderCart();
     if (navigator.vibrate) navigator.vibrate([20, 40, 20]);
     toast(`บันทึกบิล #${bill.seq} · ${baht(bill.total)}`, 'ยกเลิกบิลนี้', async () => {
       await POS.voidBill(bill.id);
@@ -125,7 +134,7 @@
   let toastTimer;
   function toast(msg, btn, fn, ms, keys) {
     clearTimeout(toastTimer);
-    $('#toastMsg').innerHTML = esc(msg) + (keys ? ' ' + keys.map(k => `<span class="kk ${k[0]}">${k[1]}</span>`).join(' ') : '');
+    $('#toastMsg').innerHTML = esc(msg) + (keys ? ' ' + keys.map(k => `<span class="kc sm ${k[0]}">${k[1]}</span>`).join(' ') : '');
     const b = $('#toastBtn');
     b.style.display = btn ? '' : 'none'; b.textContent = btn || '';
     b.onclick = () => { $('#toast').classList.remove('on'); if (fn) fn(); };
