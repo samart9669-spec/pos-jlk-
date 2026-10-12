@@ -303,7 +303,7 @@
     };
     $('#resetMenu').onclick = async () => {
       if (!confirm('กลับไปใช้เมนูตัวอย่าง?')) return;
-      await POS.saveMenu(self.POS_DEFAULT_MENU); await POS.saveSettings({ menuIsDummy: true });
+      await POS.saveMenu(self.POS_DEFAULT_MENU); await POS.saveSettings({ menuIsDummy: false });
       MENU = self.POS_DEFAULT_MENU; S = await POS.getSettings(); cart.clear(); renderMenu(); renderCart(); renderSet();
     };
   }
