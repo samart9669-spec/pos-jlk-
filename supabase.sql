@@ -153,6 +153,6 @@ values ('jlk', 'JLK Tower', encode(extensions.digest('CHANGE-ME-jlk', 'sha256'),
 on conflict (branch_id) do nothing;
 
 -- เปลี่ยนรหัสลับ:
---   update public.pos_branches set token_hash = encode(extensions.digest('รหัสใหม่ของคุณ','sha256'),'hex') where branch_id = 'jlk';
+--   update public.pos_branches set token_hash = encode(extensions.digest('Kang1111','sha256'),'hex') where branch_id = 'jlk';
 -- เปลี่ยนชื่อสาขาที่ออกใน CSV:
 --   update public.pos_branches set branch_name = 'JLK Tower' where branch_id = 'jlk';
