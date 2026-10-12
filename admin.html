@@ -150,7 +150,7 @@ th{color:var(--muted);font-weight:600;font-size:13px}
   const A=(name,body)=>api(name,Object.assign({p_branch:br.branch_id},body||{}));
 
   /* ---------- login / boot ---------- */
-  function showLogin(msg){$('#app').hidden=true;$('#login').hidden=false;$('#lMsg').textContent=msg||'';$('#cfgBox').hidden=!!(cfg.url&&cfg.key&&lsGet('pos_admin_cfg_ok'));}
+  function showLogin(msg){$('#app').hidden=true;$('#login').hidden=false;$('#lMsg').textContent=msg||'';$('#cfgBox').hidden=!!(cfg.url&&cfg.key);}
   async function boot(){
     cfg=lsGet(LSC)||{};
     try{const s=await POS.getSettings();cfg.url=cfg.url||s.supabaseUrl;cfg.key=cfg.key||s.apiKey}catch(e){}
@@ -172,7 +172,7 @@ th{color:var(--muted);font-weight:600;font-size:13px}
     const m=$('#lMsg');m.textContent='';
     cfg={url:$('#lUrl').value.trim(),key:$('#lKey').value.trim()};
     if(!cfg.url||!cfg.key||!$('#lEmail').value||!$('#lPass').value){m.textContent='กรอกข้อมูลให้ครบ';return}
-    try{await token('password',{email:$('#lEmail').value.trim(),password:$('#lPass').value});lsSet(LSC,cfg);$('#lPass').value='';await start();lsSet('pos_admin_cfg_ok',1)}
+    try{await token('password',{email:$('#lEmail').value.trim(),password:$('#lPass').value});lsSet(LSC,cfg);$('#lPass').value='';await start()}
     catch(e){m.textContent=e.message}
   };
   $('#lPass').onkeydown=e=>{if(e.key==='Enter')$('#lGo').click()};
