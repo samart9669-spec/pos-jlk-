@@ -138,6 +138,7 @@
     try {
       const s = await getSettings();
       if (!s.supabaseUrl || !s.apiKey || !s.branchId || !s.token || (g.navigator && navigator.onLine === false)) return false;
+      await kvSet('menuTry', Date.now());
       const headers = { 'Content-Type': 'application/json', apikey: s.apiKey };
       if (s.apiKey.startsWith('eyJ')) headers.Authorization = 'Bearer ' + s.apiKey;
       const resp = await fetch(s.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/device_get_menu',

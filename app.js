@@ -182,6 +182,7 @@
   async function tick() {
     const next = (await POS.kvGet('nextAttempt')) || 0;
     if (Date.now() >= next && navigator.onLine) await trySync(false); else await updateStatus();
+    if (navigator.onLine && Date.now() - ((await POS.kvGet('menuTry')) || 0) >= 5 * 60000) pullMenu();   // เมนูจากหลังบ้าน: เช็กทุก 5 นาที
   }
   window.addEventListener('online', async () => { const lr = await POS.kvGet('lastResult'); if (!lr || !lr.ok) trySync(false); else updateStatus(); });
   window.addEventListener('offline', updateStatus);

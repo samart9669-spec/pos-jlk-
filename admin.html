@@ -222,7 +222,8 @@ th{color:var(--muted);font-weight:600;font-size:13px}
     const mx=Math.max(1,...tr.map(x=>+x.total));
     $('#page').innerHTML=`<h2 class="pt">วันนี้ · ${today}</h2>${kpisHtml(d)}<p class="mut">${freshHtml(d,true)}</p>
       <div class="card"><h2>ยอดรายชั่วโมง</h2><div class="hours">${hoursHtml(d.hourly)}</div></div>
-      <div class="card"><h2>ยอดขาย 14 วันล่าสุด</h2><div class="hours">${tr.map(x=>`<div class="hc"><em>${x.total?Math.round(x.total/1000*10)/10+'k':''}</em><i style="height:${Math.max(2,(+x.total/mx)*100)}px"></i><span>${x.date.slice(8)}</span></div>`).join('')}</div></div>
+      <div class="card"><h2>ยอดขาย 14 วันล่าสุด (บาท)</h2><div class="hours" style="height:110px;padding-top:0">${tr.map(x=>`<div class="hc"><i style="height:${Math.max(2,(+x.total/mx)*100)}px"></i><span>${x.date.slice(8)}</span></div>`).join('')}</div>
+        <table style="margin-top:14px"><tr><th>วันที่</th><th class="r">บิล</th><th class="r">ยอดขาย</th></tr>${tr.slice().reverse().map(x=>`<tr><td>${x.date}</td><td class="r">${x.bills}</td><td class="r">${money(x.total)}</td></tr>`).join('')}</table></div>
       <div class="card"><h2>สต็อกใกล้หมด</h2>${low.length?'<table>'+low.map(i=>`<tr><td>${esc(i.name)}</td><td class="r low">${num(i.balance)} ${esc(i.unit)}</td><td class="r mut">เตือนที่ ≤ ${num(i.min_level)}</td></tr>`).join('')+'</table>':'<span class="mut">ไม่มีรายการใกล้หมด</span>'}</div>`;
   }
 
