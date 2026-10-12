@@ -132,6 +132,29 @@
     return r;
   }
 
+
+  // ดึงเมนู/ราคาจากหลังบ้าน (ตั้งที่เว็บหลังบ้าน) — เปลี่ยนแปลงเมื่อมีรายการและต่างจากที่เก็บไว้ คืนค่า true ถ้าเมนูเปลี่ยน
+  async function fetchMenu() {
+    try {
+      const s = await getSettings();
+      if (!s.supabaseUrl || !s.apiKey || !s.branchId || !s.token || (g.navigator && navigator.onLine === false)) return false;
+      const headers = { 'Content-Type': 'application/json', apikey: s.apiKey };
+      if (s.apiKey.startsWith('eyJ')) headers.Authorization = 'Bearer ' + s.apiKey;
+      const resp = await fetch(s.supabaseUrl.replace(/\/+$/, '') + '/rest/v1/rpc/device_get_menu',
+        { method: 'POST', headers, body: JSON.stringify({ p_branch: s.branchId, p_token: s.token }) });
+      if (!resp.ok) return false;
+      const d = await resp.json();
+      const items = d && Array.isArray(d.items) ? d.items.filter(x => x && x.keypad && x.name && isFinite(+x.price)) : [];
+      if (!items.length) return false;
+      const norm = items.map(x => ({ keypad: String(x.keypad), code: x.code || '', name: String(x.name), price: +x.price, group: x.group || 'เมนู' }));
+      const cur = await kvGet('menu');
+      const changed = JSON.stringify(cur || null) !== JSON.stringify(norm);
+      if (changed) { await saveMenu(norm); await saveSettings({ menuIsDummy: false }); }
+      await kvSet('menuFetchedAt', Date.now());
+      return changed;
+    } catch (e) { return false; }
+  }
+
   // ---------- CSV ----------
   const csvCell = v => { const s = String(v); return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   // รูปแบบเดียวกับแท็บ Data: date,branch,item_code,item_name,price,qty,amount (นับเฉพาะบิลที่ไม่ยกเลิก)
@@ -167,7 +190,7 @@
     return { items: out, errors };
   }
 
-  g.POS = { openDB, kvGet, kvSet, getSettings, saveSettings, getMenu, saveMenu, bkkDate, bkkHour, bkkTime, uuid,
+  g.POS = { openDB, kvGet, kvSet, getSettings, saveSettings, getMenu, saveMenu, fetchMenu, bkkDate, bkkHour, bkkTime, uuid,
             saveBill, getBill, voidBill, billsByDate, allBills, unsynced, syncNow, toWire,
             summarizeItems, buildCsv, parseMenuText };
 })(typeof self !== 'undefined' ? self : window);

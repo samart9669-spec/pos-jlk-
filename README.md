@@ -47,3 +47,13 @@
 ## ไฟล์
 
 `index.html` `app.js` (หน้าจอ) · `core.js` (เก็บข้อมูล/ซิงก์/CSV) · `config.js` (ค่าเริ่มต้น เมนูตัวอย่าง ช่องทางชำระ) · `sw.js` `manifest.webmanifest` `icons/` (ติดตั้ง/ออฟไลน์) · `supabase.sql`
+
+## หลังบ้านรวม (admin.html)
+
+เปิด `admin.html` (เช่น `https://samart9669-spec.github.io/pos-jlk-/admin.html`) ล็อกอินด้วยบัญชี Supabase Auth
+
+- ภาพรวม · ยอดขาย (รายวัน รายชั่วโมง ช่องทางชำระ รายเมนู) · สต็อก · เมนู/ราคา · ทีมงาน
+- สิทธิ์ต่อสาขา: owner = ทุกอย่าง · manager = ยอดขาย สต็อก เมนู · staff = สต็อก (รับเข้า/นับ/ของเสีย) และดูเมนู
+- เมนู/ราคาแก้ที่หลังบ้านที่เดียว แอปมือถือดึงไปใช้เองเมื่อส่งข้อมูลรอบถัดไป
+
+ตั้งค่าครั้งแรก: รัน `supabase.sql` แล้ว `supabase_backoffice.sql` ใน SQL Editor → สร้างบัญชีเจ้าของใน Authentication → Users → รันคำสั่งตั้งเจ้าของคนแรกท้ายไฟล์ `supabase_backoffice.sql` (`report.html` / `stock.html` ย้ายมาที่ `admin.html` แล้ว)

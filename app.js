@@ -160,8 +160,18 @@
     const today = (await POS.billsByDate(POS.bkkDate())).filter(b => b.status === 'ok');
     todayPill.textContent = `วันนี้ ${today.length} บิล · ${baht(today.reduce((s, b) => s + b.total, 0))}`;
   }
+
+  // เมนูจากหลังบ้าน: ถ้าเปลี่ยน และไม่มีบิลค้างบนหน้าจอ ให้โหลดใหม่ (กันเลขลำดับในตะกร้าเพี้ยน)
+  let menuPending = false;
+  async function pullMenu() {
+    if (await POS.fetchMenu()) menuPending = true;
+    if (menuPending && cart.size === 0) {
+      menuPending = false; MENU = await POS.getMenu(); S = await POS.getSettings(); renderMenu(); renderCart();
+    }
+  }
   async function trySync(manual) {
     const r = await POS.syncNow();
+    if (r.ok) pullMenu();
     if (!r.ok && 'serviceWorker' in navigator) {
       try { const reg = await navigator.serviceWorker.ready; if (reg.sync) await reg.sync.register('pos-sync'); } catch (e) {}
     }
@@ -177,6 +187,8 @@
   window.addEventListener('offline', updateStatus);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(); applyWake(); } });
   setInterval(tick, 30000);
+  setInterval(() => { if (menuPending && cart.size === 0) pullMenu(); }, 30000);
+  pullMenu();
 
   // ---------- แท็บ ----------
   $('#tabs').addEventListener('click', e => {

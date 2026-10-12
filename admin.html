@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>หลังบ้าน หมูพริ้ว</title>
+<style>
+:root{--bg:#f1f3f6;--panel:#fff;--card:#fff;--line:#d5dbe3;--ink:#10161d;--muted:#586272;--accent:#b45309;--ok:#15803d;--bad:#b91c1c;--bar:#d97706;--soft:#e8ecf2}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1015;--panel:#10161c;--card:#141a21;--line:#2a3440;--ink:#eef2f6;--muted:#8e9aa8;--accent:#fbbf24;--ok:#34d399;--bad:#f87171;--bar:#fbbf24;--soft:#1f2832;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Noto Sans Thai","Sarabun",system-ui,-apple-system,Roboto,sans-serif}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input,select{width:100%}
+input[type=checkbox]{width:20px;height:20px;padding:0}
+button{cursor:pointer}
+button.p{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+button.d{color:var(--bad)}
+label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card h2{margin:0 0 10px;font-size:15px;color:var(--muted);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mut{color:var(--muted);font-size:13px}
+.err{color:var(--bad);white-space:pre-wrap}.okm{color:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.low{color:var(--bad);font-weight:700}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.tag.low{border-color:var(--bad);color:var(--bad)}
+
+/* login */
+#login{max-width:420px;margin:8vh auto;padding:0 16px}
+#login .card{padding:20px}
+#login h1{margin:0 0 4px;font-size:22px}
+
+/* shell */
+#app{display:flex;min-height:100vh}
+#side{width:210px;flex:0 0 210px;background:var(--panel);border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+#side h1{font-size:17px;margin:2px 8px 0}
+#side .sub{margin:0 8px 10px}
+#nav button{display:block;width:100%;text-align:left;border:0;background:none;padding:11px 12px;border-radius:10px;font-weight:600;color:var(--muted)}
+#nav button.on{background:var(--soft);color:var(--accent)}
+#side .bot{margin-top:auto;display:flex;flex-direction:column;gap:6px}
+#main{flex:1;min-width:0;padding:16px 16px 90px;max-width:960px}
+#main h2.pt{font-size:20px;margin:0 0 12px}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:700px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi small{color:var(--muted);display:block}.kpi b{font-size:26px;font-variant-numeric:tabular-nums}
+.hours{display:flex;align-items:flex-end;gap:6px;height:150px;padding-top:18px}
+.hc{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.hc i{display:block;width:100%;max-width:38px;background:var(--bar);border-radius:4px 4px 0 0;min-height:2px}
+.hc span{font-size:11px;color:var(--muted);margin-top:4px}.hc em{font-style:normal;font-size:11px;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:130px}
+.kinds{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.kinds button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.rrow{display:grid;grid-template-columns:1fr 90px 40px;gap:6px;margin-bottom:6px}
+.mrow{display:grid;grid-template-columns:54px 84px 1fr 80px 100px 28px 40px;gap:6px;margin-bottom:6px;align-items:center}
+.mrow.h{font-size:12px;color:var(--muted)}
+@media(max-width:700px){
+  #app{flex-direction:column}
+  #side{position:fixed;bottom:0;left:0;right:0;top:auto;width:auto;height:auto;flex-direction:row;padding:6px;border-right:0;border-top:1px solid var(--line);z-index:5;flex:none}
+  #side h1,#side .sub,#side .bot{display:none}
+  #nav{display:flex;width:100%;gap:2px}#nav button{text-align:center;padding:10px 2px;font-size:13px}
+  .mrow{grid-template-columns:44px 1fr 70px 28px 36px}.mrow .c,.mrow .g{display:none}
+  .mtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+}
+.mtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.mtop h2{margin:0;font-size:20px}
+.topbar-m{display:none}
+@media(max-width:700px){.topbar-m{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}}
+</style>
+</head>
+<body>
+
+<div id="login" hidden>
+  <div class="card">
+    <h1>หลังบ้าน หมูพริ้ว</h1>
+    <p class="mut">เข้าสู่ระบบด้วยบัญชีทีมงาน</p>
+    <div id="cfgBox">
+      <label>Project URL<input id="lUrl" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>
+      <label style="margin-top:8px">Publishable key<input id="lKey" placeholder="sb_publishable_..." autocomplete="off"></label>
+    </div>
+    <label style="margin-top:8px">อีเมล<input id="lEmail" type="email" autocomplete="username"></label>
+    <label style="margin-top:8px">รหัสผ่าน<input id="lPass" type="password" autocomplete="current-password"></label>
+    <p><button class="p" id="lGo" style="width:100%">เข้าสู่ระบบ</button></p>
+    <div id="lMsg" class="err"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <aside id="side">
+    <h1 id="brand">หมูพริ้ว</h1><div class="mut sub" id="who"></div>
+    <div id="nav"></div>
+    <div class="bot"><select id="branchSel" hidden></select><button id="logout">ออกจากระบบ</button></div>
+  </aside>
+  <main id="main">
+    <div class="topbar-m"><b id="brandM"></b><button id="logoutM">ออกจากระบบ</button></div>
+    <div id="msg"></div>
+    <div id="page"></div>
+  </main>
+</div>
+
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const money=n=>'฿'+Math.round(Number(n)||0).toLocaleString('en-US');
+  const num=n=>(Math.round((+n||0)*100)/100).toLocaleString('en-US');
+  const LSC='pos_admin_cfg', LSS='pos_admin_session';
+  const RANK={staff:1,manager:2,owner:3}, RN={owner:'เจ้าของ',manager:'ผู้จัดการ',staff:'พนักงาน'};
+  let cfg={}, ses=null, access=[], br=null, page='', cache={};
+
+  const lsGet=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+  const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const say=(t,ok)=>{const m=$('#msg');m.className=ok?'okm':'err';m.textContent=t||'';if(ok)setTimeout(()=>{if(m.textContent===t)m.textContent=''},2500)};
+
+  /* ---------- auth (Supabase GoTrue ผ่าน fetch) ---------- */
+  const base=()=>cfg.url.replace(/\/+$/,'');
+  async function token(grant,body){
+    const r=await fetch(base()+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{'Content-Type':'application/json',apikey:cfg.key},body:JSON.stringify(body)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(d.error_description||d.msg||d.message||('เข้าสู่ระบบไม่สำเร็จ ('+r.status+')'));
+    ses={access_token:d.access_token,refresh_token:d.refresh_token,expires_at:Date.now()+(d.expires_in||3600)*1000,email:(d.user&&d.user.email)||(ses&&ses.email)||''};
+    lsSet(LSS,ses);
+  }
+  async function fresh(){
+    if(!ses) throw new Error('กรุณาเข้าสู่ระบบ');
+    if(Date.now()>ses.expires_at-60000){
+      try{await token('refresh_token',{refresh_token:ses.refresh_token})}catch(e){ses=null;lsSet(LSS,null);showLogin('หมดเวลาเข้าสู่ระบบ กรุณาเข้าใหม่');throw e}
+    }
+  }
+  async function api(name,body){
+    await fresh();
+    const r=await fetch(base()+'/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json',apikey:cfg.key,Authorization:'Bearer '+ses.access_token},body:JSON.stringify(body||{})});
+    const t=await r.text();
+    if(!r.ok){
+      if(/user not found/.test(t)) throw new Error('ไม่พบบัญชีนี้ — สร้างบัญชีใน Supabase → Authentication → Users ก่อน');
+      if(/cannot demote/.test(t)) throw new Error('ลดสิทธิ์/ปิดบัญชีของตัวเองไม่ได้');
+      if(/unauthorized/.test(t)||r.status===403) throw new Error('ไม่มีสิทธิ์ทำรายการนี้');
+      if(r.status===404) throw new Error('ยังไม่ได้รัน supabase_backoffice.sql ใน Supabase');
+      throw new Error('เซิร์ฟเวอร์ตอบ '+r.status+' '+t.slice(0,160));
+    }
+    return t?JSON.parse(t):null;
+  }
+  const A=(name,body)=>api(name,Object.assign({p_branch:br.branch_id},body||{}));
+
+  /* ---------- login / boot ---------- */
+  function showLogin(msg){$('#app').hidden=true;$('#login').hidden=false;$('#lMsg').textContent=msg||'';$('#cfgBox').hidden=!!(cfg.url&&cfg.key&&lsGet('pos_admin_cfg_ok'));}
+  async function boot(){
+    cfg=lsGet(LSC)||{};
+    try{const s=await POS.getSettings();cfg.url=cfg.url||s.supabaseUrl;cfg.key=cfg.key||s.apiKey}catch(e){}
+    $('#lUrl').value=cfg.url||'';$('#lKey').value=cfg.key||'';
+    ses=lsGet(LSS);
+    if(!ses||!cfg.url||!cfg.key) return showLogin();
+    try{await start()}catch(e){showLogin(e.message)}
+  }
+  async function start(){
+    access=await api('my_access');
+    if(!access.length){ses=null;lsSet(LSS,null);return showLogin('บัญชีนี้ยังไม่ได้รับสิทธิ์เข้าหลังบ้าน — ให้เจ้าของเพิ่มคุณในหน้า ทีมงาน');}
+    const saved=lsGet('pos_admin_branch');
+    br=access.find(a=>a.branch_id===saved)||access[0];
+    $('#login').hidden=true;$('#app').hidden=false;
+    const sel=$('#branchSel');sel.hidden=access.length<2;sel.innerHTML=access.map(a=>`<option value="${esc(a.branch_id)}"${a===br?' selected':''}>${esc(a.branch_name)}</option>`).join('');
+    drawShell();
+  }
+  $('#lGo').onclick=async()=>{
+    const m=$('#lMsg');m.textContent='';
+    cfg={url:$('#lUrl').value.trim(),key:$('#lKey').value.trim()};
+    if(!cfg.url||!cfg.key||!$('#lEmail').value||!$('#lPass').value){m.textContent='กรอกข้อมูลให้ครบ';return}
+    try{await token('password',{email:$('#lEmail').value.trim(),password:$('#lPass').value});lsSet(LSC,cfg);$('#lPass').value='';await start();lsSet('pos_admin_cfg_ok',1)}
+    catch(e){m.textContent=e.message}
+  };
+  $('#lPass').onkeydown=e=>{if(e.key==='Enter')$('#lGo').click()};
+  const logout=()=>{ses=null;lsSet(LSS,null);showLogin()};
+  $('#logout').onclick=logout;$('#logoutM').onclick=logout;
+  $('#branchSel').onchange=e=>{br=access.find(a=>a.branch_id===e.target.value);lsSet('pos_admin_branch',br.branch_id);drawShell()};
+
+  /* ---------- shell / nav ---------- */
+  const rank=()=>RANK[br.role]||1;
+  function pages(){
+    const p=[];
+    if(rank()>=2) p.push(['home','ภาพรวม'],['sales','ยอดขาย']);
+    p.push(['stock','สต็อก'],['menu','เมนู']);
+    if(rank()>=3) p.push(['team','ทีมงาน']);
+    return p;
+  }
+  function drawShell(){
+    $('#brand').textContent='หมูพริ้ว · '+br.branch_name;$('#brandM').textContent='หมูพริ้ว · '+br.branch_name;
+    $('#who').textContent=(br.name||(ses&&ses.email)||'')+' · '+RN[br.role];
+    const ps=pages();
+    $('#nav').innerHTML=ps.map(([k,l])=>`<button data-p="${k}">${l}</button>`).join('');
+    go(ps[0][0]);
+  }
+  $('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.p)};
+  function go(p){
+    page=p;cache={};say('');
+    document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+    $('#page').innerHTML='<p class="mut">กำลังโหลด…</p>';
+    ({home,sales,stock,menu,team})[p]().catch(e=>{if(page===p)say(e.message)});
+  }
+
+  /* ---------- ภาพรวม ---------- */
+  function hoursHtml(hs){const max=Math.max(1,...hs.map(x=>+x.amount));return hs.length?hs.map(x=>`<div class="hc"><em>${Math.round(x.amount).toLocaleString('en-US')}</em><i style="height:${Math.max(2,(+x.amount/max)*100)}px"></i><span>${String(x.hour).padStart(2,'0')}</span></div>`).join(''):'<span class="mut">ไม่มีข้อมูล</span>'}
+  function kpisHtml(d){return `<div class="kpis"><div class="kpi"><small>ยอดขาย</small><b>${money(d.total)}</b></div><div class="kpi"><small>จำนวนบิล</small><b>${d.bills}</b></div><div class="kpi"><small>เฉลี่ยต่อบิล</small><b>${money(d.bills?d.total/d.bills:0)}</b></div><div class="kpi"><small>บิลยกเลิก</small><b>${d.voids}</b></div></div>`}
+  function freshHtml(d,today){
+    if(!d.last_received) return 'ยังไม่มีข้อมูลของวันนี้';
+    const t=new Date(d.last_received),mins=Math.round((Date.now()-t)/60000);
+    const hh=t.toLocaleTimeString('th-TH',{timeZone:'Asia/Bangkok',hour:'2-digit',minute:'2-digit'});
+    const stale=today&&mins>120;
+    return `<span class="${stale?'low':''}">ข้อมูลล่าสุดจากร้านเข้าระบบ ${hh} น.${today?' ('+mins+' นาทีที่แล้ว)':''}</span> · ร้านส่งข้อมูลทุกชั่วโมง ยอดอาจช้ากว่าจริงได้ไม่เกินประมาณ 1 ชม.`;
+  }
+  async function home(){
+    const today=POS.bkkDate();
+    const [d,tr,st]=await Promise.all([A('get_report',{p_date:today}),A('sales_trend',{p_days:14}),A('stock_overview')]);
+    if(page!=='home') return;
+    const low=st.items.filter(i=>i.active&&+i.min_level>0&&+i.balance<=+i.min_level);
+    const mx=Math.max(1,...tr.map(x=>+x.total));
+    $('#page').innerHTML=`<h2 class="pt">วันนี้ · ${today}</h2>${kpisHtml(d)}<p class="mut">${freshHtml(d,true)}</p>
+      <div class="card"><h2>ยอดรายชั่วโมง</h2><div class="hours">${hoursHtml(d.hourly)}</div></div>
+      <div class="card"><h2>ยอดขาย 14 วันล่าสุด</h2><div class="hours">${tr.map(x=>`<div class="hc"><em>${x.total?Math.round(x.total/1000*10)/10+'k':''}</em><i style="height:${Math.max(2,(+x.total/mx)*100)}px"></i><span>${x.date.slice(8)}</span></div>`).join('')}</div></div>
+      <div class="card"><h2>สต็อกใกล้หมด</h2>${low.length?'<table>'+low.map(i=>`<tr><td>${esc(i.name)}</td><td class="r low">${num(i.balance)} ${esc(i.unit)}</td><td class="r mut">เตือนที่ ≤ ${num(i.min_level)}</td></tr>`).join('')+'</table>':'<span class="mut">ไม่มีรายการใกล้หมด</span>'}</div>`;
+  }
+
+  /* ---------- ยอดขาย ---------- */
+  async function sales(){
+    const dt=cache.date||POS.bkkDate();cache.date=dt;
+    const d=await A('get_report',{p_date:dt});
+    if(page!=='sales') return;
+    $('#page').innerHTML=`<div class="mtop"><h2>ยอดขาย</h2><input type="date" id="sDate" value="${dt}" style="width:auto"></div>${kpisHtml(d)}<p class="mut">${freshHtml(d,dt===POS.bkkDate())}</p>
+      <div class="card"><h2>ยอดรายชั่วโมง</h2><div class="hours">${hoursHtml(d.hourly)}</div></div>
+      <div class="card"><h2>ช่องทางชำระเงิน</h2><table><tr><th>ช่องทาง</th><th class="r">บิล</th><th class="r">ยอด</th></tr>${d.payments.map(x=>`<tr><td>${esc(x.name)}</td><td class="r">${x.bills}</td><td class="r">${money(x.amount)}</td></tr>`).join('')}</table></div>
+      <div class="card"><h2>ยอดแยกรายเมนู</h2><table><tr><th>เมนู</th><th class="r">จาน</th><th class="r">ยอด</th></tr>${d.items.map(x=>`<tr><td>${esc(x.name)}<div class="mut">${esc(x.code||'')} · ฿${x.price}</div></td><td class="r">${x.qty}</td><td class="r">${money(x.amount)}</td></tr>`).join('')}</table></div>`;
+    $('#sDate').onchange=e=>{cache.date=e.target.value;sales().catch(er=>say(er.message))};
+  }
+
+  /* ---------- สต็อก ---------- */
+  const KN={in:'รับเข้า',count:'นับจริง',waste:'ของเสีย',adjust:'ปรับ'};
+  const HELP={in:'ของที่รับเข้ามาเพิ่ม (บวกเข้ายอด)',count:'จำนวนที่นับได้จริงตอนนี้ — ใช้เป็นจุดเริ่มต้นใหม่ของยอดคงเหลือ',waste:'ของเสีย/ทิ้ง (หักออกจากยอด)',adjust:'ปรับยอด ใส่ + เพื่อเพิ่ม หรือ − เพื่อลด'};
+  const fmtT=t=>new Date(t).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  async function stock(){
+    const [D,menuL]=await Promise.all([A('stock_overview'),A('menu_list')]);
+    if(page!=='stock') return;
+    const mgr=rank()>=2, act=D.items.filter(i=>i.active);
+    let kind=cache.kind||'in', tab=cache.tab||'over', rrows=[];
+    const opts=act.map(i=>`<option value="${i.id}">${esc(i.name)} (${esc(i.unit)})</option>`).join('');
+    $('#page').innerHTML=`<div class="mtop"><h2>สต็อก</h2></div>
+    <div class="kinds" style="grid-template-columns:repeat(${mgr?3:2},1fr);margin-bottom:12px" id="stabs"><button data-t="over">ภาพรวม</button><button data-t="move">บันทึก</button>${mgr?'<button data-t="set">รายการ/สูตร</button>':''}</div>
+    <div id="s-over"><div class="card"><h2>ยอดคงเหลือ</h2><table><tr><th>รายการ</th><th class="r">คงเหลือ</th><th class="r">ใช้วันนี้</th></tr>${act.length?act.map(i=>{const low=+i.min_level>0&&+i.balance<=+i.min_level;return `<tr><td>${esc(i.name)}${low?' <span class="tag low">ใกล้หมด</span>':''}<div class="mut">${i.last_count_at?'นับล่าสุด '+fmtT(i.last_count_at):'ยังไม่เคยนับ — ไปแท็บ บันทึก → นับจริง'}</div></td><td class="r ${low?'low':''}">${num(i.balance)} ${esc(i.unit)}</td><td class="r">${num(i.used_today)}</td></tr>`}).join(''):'<tr><td colspan="3" class="mut">ยังไม่มีรายการ'+(mgr?' — เพิ่มที่แท็บ รายการ/สูตร':'')+'</td></tr>'}</table>
+      <p class="mut">คงเหลือ = นับล่าสุด + รับเข้า − ของเสีย − ยอดที่ขายตามสูตร (หลังนับ) · ยอดขายเข้าหลังแอปที่ร้านส่งข้อมูล (ทุกชั่วโมง)</p></div>
+      <div class="card"><h2>ประวัติล่าสุด</h2><table>${D.moves.map(m=>`<tr><td>${esc(m.name)}<div class="mut">${fmtT(m.move_at)}${m.by_name?' · '+esc(m.by_name):''}${m.note?' · '+esc(m.note):''}</div></td><td>${KN[m.kind]}</td><td class="r">${num(m.qty)} ${esc(m.unit)}</td>${mgr?`<td class="r"><button class="d" data-del="${m.id}">ลบ</button></td>`:''}</tr>`).join('')||'<tr><td class="mut">ยังไม่มีประวัติ</td></tr>'}</table></div></div>
+    <div id="s-move" hidden><div class="card"><h2>บันทึกการเคลื่อนไหวสต็อก</h2>
+      <div class="kinds" id="kinds">${Object.keys(KN).map(k=>`<button data-k="${k}">${KN[k]}</button>`).join('')}</div><p class="mut" id="kh"></p>
+      <div class="grid2"><label>รายการ<select id="mItem">${opts}</select></label><label>จำนวน <span id="mUnit"></span><input id="mQty" type="number" step="any" inputmode="decimal"></label></div>
+      <label style="margin-top:8px">หมายเหตุ (ไม่บังคับ)<input id="mNote"></label><p><button class="p" id="mSave">บันทึก</button></p></div></div>
+    ${mgr?`<div id="s-set" hidden><div class="card"><h2>เพิ่มรายการสต็อกใหม่</h2><div class="grid2">
+      <label>ชื่อ<input id="nName" placeholder="เช่น ขาหมู, ไข่พะโล้"></label><label>หน่วย<input id="nUnit" placeholder="กก. / ฟอง / จาน"></label>
+      <label>ชนิด<select id="nKind"><option value="raw">วัตถุดิบ</option><option value="portion">จำนวนจานที่เตรียมขาย</option></select></label><label>เตือนเมื่อต่ำกว่า<input id="nMin" type="number" step="any" value="0"></label></div>
+      <p><button class="p" id="nSave">เพิ่มรายการ</button></p></div>
+      <div class="card"><h2>สูตรตัดสต็อก (ขาย 1 จาน ตัดเท่าไร)</h2><label>เลือกรายการสต็อก<select id="rItem">${opts}</select></label><div id="rRows" style="margin-top:10px"></div>
+      <p><button id="rAdd">+ เพิ่มเมนู</button> <button class="p" id="rSave">บันทึกสูตร</button></p>
+      <p class="mut">ตัวอย่าง: "ขาหมู (กก.)" · JL2002 ข้าวขาหมู ตัด 0.25 · "ข้าวขาหมู (จาน)" ตัด 1</p></div></div>`:''}`;
+    const show=t=>{tab=cache.tab=t;['over','move','set'].forEach(x=>{const e=$('#s-'+x);if(e)e.hidden=x!==t});document.querySelectorAll('#stabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))};
+    const setKind=k=>{kind=cache.kind=k;document.querySelectorAll('#kinds button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));$('#kh').textContent=HELP[k]};
+    const unit=()=>{const i=D.items.find(x=>x.id==$('#mItem').value);$('#mUnit').textContent=i?'('+i.unit+')':''};
+    $('#stabs').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.t)};
+    $('#kinds').onclick=e=>{const b=e.target.closest('button');if(b)setKind(b.dataset.k)};
+    $('#mItem').onchange=unit;show(tab);setKind(kind);unit();
+    const reload=async m=>{await stock();if(m)say(m,true)};
+    $('#mSave').onclick=async()=>{const q=parseFloat($('#mQty').value);if(!$('#mItem').value||isNaN(q)){say('เลือกรายการและใส่จำนวน');return}
+      try{await A('stock_add_move',{p_item_id:+$('#mItem').value,p_kind:kind,p_qty:q,p_note:$('#mNote').value});cache.tab='over';await reload('บันทึกแล้ว')}catch(e){say(e.message)}};
+    $('#s-over').onclick=async e=>{const b=e.target.closest('[data-del]');if(!b||!confirm('ลบรายการนี้?'))return;try{await A('stock_delete_move',{p_move_id:+b.dataset.del});await reload()}catch(er){say(er.message)}};
+    if(mgr){
+      const MENU=menuL.filter(m=>m.active);
+      const drawR=()=>{$('#rRows').innerHTML=rrows.length?rrows.map((r,i)=>`<div class="rrow"><select data-ri="${i}" data-f="menu_code">${MENU.map(m=>`<option value="${esc(m.code)}"${m.code===r.menu_code?' selected':''}>${esc(m.code)} ${esc(m.name)}</option>`).join('')}</select><input data-ri="${i}" data-f="qty" type="number" step="any" value="${r.qty}"><button class="d" data-rd="${i}">×</button></div>`).join(''):'<p class="mut">ยังไม่มีสูตร</p>'};
+      const loadR=()=>{const id=+$('#rItem').value;rrows=D.recipes.filter(r=>r.stock_item_id===id).map(r=>({menu_code:r.menu_code,qty:r.qty}));drawR()};
+      $('#rItem').onchange=loadR;loadR();
+      $('#rAdd').onclick=()=>{rrows.push({menu_code:(MENU[0]||{}).code||'',qty:1});drawR()};
+      $('#rRows').oninput=e=>{const t=e.target,i=t.dataset.ri;if(i==null)return;rrows[i][t.dataset.f]=t.dataset.f==='qty'?parseFloat(t.value):t.value};
+      $('#rRows').onclick=e=>{const b=e.target.closest('[data-rd]');if(!b)return;rrows.splice(+b.dataset.rd,1);drawR()};
+      $('#rSave').onclick=async()=>{if(!$('#rItem').value){say('เลือกรายการสต็อกก่อน');return}
+        try{await A('stock_set_recipes',{p_item_id:+$('#rItem').value,p_rows:rrows.filter(r=>r.menu_code&&r.qty>0).map(r=>({menu_code:r.menu_code,qty:r.qty}))});cache.tab='set';await reload('บันทึกสูตรแล้ว')}catch(e){say(e.message)}};
+      $('#nSave').onclick=async()=>{if(!$('#nName').value.trim()){say('ใส่ชื่อรายการ');return}
+        try{await A('stock_upsert_item',{p_item:{name:$('#nName').value.trim(),unit:$('#nUnit').value.trim()||'หน่วย',kind:$('#nKind').value,min_level:String($('#nMin').value||0)}});cache.tab='set';await reload('เพิ่มรายการแล้ว')}catch(e){say(e.message)}};
+    }
+  }
+
+  /* ---------- เมนู ---------- */
+  async function menu(){
+    let items=await A('menu_list');
+    if(page!=='menu') return;
+    const edit=rank()>=2;
+    const draw=()=>{
+      $('#page').innerHTML=`<div class="mtop"><h2>เมนูและราคา</h2>${edit?'<button class="p" id="mSave">บันทึกทั้งหมด</button>':''}</div>
+      <div class="card"><div class="mrow h"><span>เลขกด</span><span class="c">รหัสสินค้า</span><span>ชื่อเมนู</span><span>ราคา</span><span class="g">กลุ่ม</span><span>ขาย</span><span></span></div>
+      ${items.map((m,i)=>`<div class="mrow"><input data-i="${i}" data-f="keypad" value="${esc(m.keypad)}" ${edit?'':'disabled'}><input class="c" data-i="${i}" data-f="code" value="${esc(m.code)}" ${edit?'':'disabled'}><input data-i="${i}" data-f="name" value="${esc(m.name)}" ${edit?'':'disabled'}><input data-i="${i}" data-f="price" type="number" step="any" value="${m.price}" ${edit?'':'disabled'}><input class="g" data-i="${i}" data-f="group" value="${esc(m.group)}" ${edit?'':'disabled'}><input type="checkbox" data-i="${i}" data-f="active" ${m.active?'checked':''} ${edit?'':'disabled'}>${edit?`<button class="d" data-rm="${i}">×</button>`:'<span></span>'}</div>`).join('')}
+      ${edit?'<p><button id="mAdd">+ เพิ่มเมนู</button></p>':''}</div>
+      <p class="mut">${edit?'แก้แล้วกด "บันทึกทั้งหมด" — แอปมือถือที่ร้านจะรับเมนูใหม่เองเมื่อส่งข้อมูลรอบถัดไป (และเมื่อไม่มีบิลค้างบนหน้าจอ) · รหัสสินค้าต้องไม่ซ้ำกัน และถ้าเปลี่ยนรหัส สูตรสต็อกที่ผูกรหัสเดิมต้องตั้งใหม่':'ดูได้อย่างเดียว — ให้ผู้จัดการ/เจ้าของแก้ไข'}</p>`;
+      if(!edit) return;
+      $('#page').oninput=e=>{const t=e.target,i=t.dataset.i;if(i==null)return;items[i][t.dataset.f]=t.type==='checkbox'?t.checked:(t.dataset.f==='price'?parseFloat(t.value):t.value)};
+      $('#page').onclick=e=>{const b=e.target.closest('[data-rm]');if(b){items.splice(+b.dataset.rm,1);draw()}};
+      $('#mAdd').onclick=()=>{const n=items.length+1;items.push({keypad:String(n),code:'',name:'',price:0,group:items.length?items[items.length-1].group:'เมนู',active:true});draw()};
+      $('#mSave').onclick=async()=>{
+        const bad=items.find(m=>!String(m.keypad).trim()||!String(m.code).trim()||!String(m.name).trim()||!isFinite(m.price)||m.price<0);
+        if(bad){say('กรอกเลขกด รหัสสินค้า ชื่อ และราคาให้ครบทุกแถว');return}
+        const codes=items.map(m=>m.code.trim());if(new Set(codes).size!==codes.length){say('รหัสสินค้าซ้ำกัน');return}
+        const keys=items.filter(m=>m.active).map(m=>String(m.keypad).trim());if(new Set(keys).size!==keys.length&&!confirm('มีเลขกดซ้ำกันในเมนูที่ขายอยู่ ต้องการบันทึกต่อไหม?'))return;
+        try{await A('menu_save',{p_items:items.map(m=>({code:m.code.trim(),keypad:String(m.keypad).trim(),name:m.name.trim(),price:m.price,group:m.group,active:m.active}))});say('บันทึกเมนูแล้ว',true);items=await A('menu_list');draw()}catch(e){say(e.message)}};
+    };
+    draw();
+  }
+
+  /* ---------- ทีมงาน ---------- */
+  async function team(){
+    const list=await A('staff_list');
+    if(page!=='team') return;
+    $('#page').innerHTML=`<div class="mtop"><h2>ทีมงาน</h2></div>
+    <div class="card"><h2>รายชื่อ</h2><table><tr><th>ชื่อ / อีเมล</th><th>สิทธิ์</th><th>ใช้งาน</th><th></th></tr>${list.map((s,i)=>`<tr><td>${esc(s.name||'-')}<div class="mut">${esc(s.email)}</div></td><td><select data-i="${i}" data-f="role">${['owner','manager','staff'].map(r=>`<option value="${r}"${s.role===r?' selected':''}>${RN[r]}</option>`).join('')}</select></td><td><input type="checkbox" data-i="${i}" data-f="active" ${s.active?'checked':''}></td><td><button data-sv="${i}">บันทึก</button></td></tr>`).join('')}</table>
+    <p class="mut">เจ้าของ = ทุกอย่าง · ผู้จัดการ = ยอดขาย สต็อก เมนู · พนักงาน = สต็อก (รับเข้า/นับ/ของเสีย) และดูเมนู</p></div>
+    <div class="card"><h2>เพิ่มทีมงาน</h2>
+      <p class="mut">1) สร้างบัญชีใน Supabase → Authentication → Users → Add user (ใส่อีเมล รหัสผ่าน และติ๊ก Auto Confirm User) 2) ใส่อีเมลเดียวกันที่นี่เพื่อให้สิทธิ์</p>
+      <div class="grid2"><label>อีเมล<input id="tEmail" type="email"></label><label>ชื่อที่แสดง<input id="tName"></label>
+      <label>สิทธิ์<select id="tRole"><option value="staff">พนักงาน</option><option value="manager">ผู้จัดการ</option><option value="owner">เจ้าของ</option></select></label></div>
+      <p><button class="p" id="tAdd">เพิ่ม</button></p></div>`;
+    const save=async(email,role,name,active)=>{try{await A('staff_set',{p_email:email,p_role:role,p_name:name,p_active:active});await team();say('บันทึกแล้ว',true)}catch(e){say(e.message)}};
+    $('#page').onclick=e=>{const b=e.target.closest('[data-sv]');if(!b)return;const i=+b.dataset.sv,s=list[i];
+      const row=b.closest('tr');save(s.email,row.querySelector('[data-f=role]').value,s.name,row.querySelector('[data-f=active]').checked)};
+    $('#tAdd').onclick=()=>{if(!$('#tEmail').value.trim()){say('ใส่อีเมล');return}save($('#tEmail').value,$('#tRole').value,$('#tName').value,true)};
+  }
+
+  boot();
+  setInterval(()=>{if(!document.hidden&&ses&&!$('#app').hidden&&(page==='home'||page==='sales'&&cache.date===POS.bkkDate())){const p=page;({home,sales})[p]().catch(()=>{})}},60000);
+})();
+</script>
+</body>
+</html>
