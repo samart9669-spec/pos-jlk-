@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>สต็อก หมูพริ้ว JLK Tower</title>
+<style>
+:root{--bg:#f1f3f6;--card:#fff;--line:#d5dbe3;--ink:#10161d;--muted:#586272;--accent:#b45309;--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--soft:#e8ecf2}
+@media (prefers-color-scheme:dark){:root{--bg:#0c1015;--card:#141a21;--line:#2a3440;--ink:#eef2f6;--muted:#8e9aa8;--accent:#fbbf24;--ok:#34d399;--bad:#f87171;--warn:#fbbf24;--soft:#1f2832;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Noto Sans Thai","Sarabun",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:14px 14px 50px;display:flex;flex-direction:column;gap:12px}
+h1{font-size:20px;margin:0}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.sp{flex:1}
+a.lnk{color:var(--accent);text-decoration:none;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.card h2{margin:0 0 10px;font-size:15px;color:var(--muted);font-weight:600}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+input,select{width:100%}
+button{cursor:pointer}
+button.p{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+button.d{color:var(--bad)}
+.tabs{display:flex;gap:6px}.tabs button{flex:1;font-weight:600}.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:8px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mut{color:var(--muted);font-size:13px}
+.low{color:var(--bad);font-weight:700}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.tag.low{border-color:var(--bad)}
+.err{color:var(--bad);white-space:pre-wrap}.okm{color:var(--ok)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.kinds{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.kinds button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.rrow{display:grid;grid-template-columns:1fr 90px 40px;gap:6px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>สต็อก · JLK Tower</h1><span class="sp"></span><a class="lnk" href="report.html">← รายงานยอดขาย</a><button id="reload">รีเฟรช</button></div>
+  <div id="msg"></div>
+  <div class="tabs" id="tabs"><button data-t="over" class="on">ภาพรวม</button><button data-t="move">บันทึก</button><button data-t="set">รายการ/สูตร</button></div>
+
+  <div id="t-over">
+    <div class="card"><h2>ยอดคงเหลือ</h2><table id="bal"></table>
+      <p class="mut">คงเหลือ = นับล่าสุด + รับเข้า − ของเสีย − ยอดที่ขายตามสูตร (หลังนับ) · ยอดขายเข้าหลังแอปที่ร้านส่งข้อมูล (ทุกชั่วโมง)</p></div>
+    <div class="card" style="margin-top:12px"><h2>ประวัติล่าสุด</h2><table id="hist"></table></div>
+  </div>
+
+  <div id="t-move" hidden>
+    <div class="card">
+      <h2>บันทึกการเคลื่อนไหวสต็อก</h2>
+      <div class="kinds" id="kinds">
+        <button data-k="in" class="on">รับเข้า</button><button data-k="count">นับจริง</button><button data-k="waste">ของเสีย</button><button data-k="adjust">ปรับ ±</button>
+      </div>
+      <p class="mut" id="kindHelp"></p>
+      <div class="grid2">
+        <label>รายการ<select id="mItem"></select></label>
+        <label>จำนวน <span id="mUnit"></span><input id="mQty" type="number" step="any" inputmode="decimal"></label>
+      </div>
+      <label style="margin-top:8px">หมายเหตุ (ไม่บังคับ)<input id="mNote"></label>
+      <p><button class="p" id="mSave">บันทึก</button></p>
+    </div>
+  </div>
+
+  <div id="t-set" hidden>
+    <div class="card">
+      <h2>เพิ่มรายการสต็อกใหม่</h2>
+      <div class="grid2">
+        <label>ชื่อ<input id="nName" placeholder="เช่น ขาหมู, ไข่พะโล้"></label>
+        <label>หน่วย<input id="nUnit" placeholder="กก. / ฟอง / จาน"></label>
+        <label>ชนิด<select id="nKind"><option value="raw">วัตถุดิบ</option><option value="portion">จำนวนจานที่เตรียมขาย</option></select></label>
+        <label>เตือนเมื่อต่ำกว่า<input id="nMin" type="number" step="any" value="0"></label>
+      </div>
+      <p><button class="p" id="nSave">เพิ่มรายการ</button></p>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <h2>สูตรตัดสต็อก (ขาย 1 จาน ตัดเท่าไร)</h2>
+      <label>เลือกรายการสต็อก<select id="rItem"></select></label>
+      <div id="rRows" style="margin-top:10px"></div>
+      <p><button id="rAdd">+ เพิ่มเมนู</button> <button class="p" id="rSave">บันทึกสูตร</button></p>
+      <p class="mut">ตัวอย่าง: รายการ "ขาหมู (กก.)" · เมนู JL2002 ข้าวขาหมู ตัด 0.25 · รายการ "ข้าวขาหมู (จาน)" ตัด 1</p>
+    </div>
+  </div>
+</div>
+<script src="config.js"></script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const num=n=>(Math.round((+n||0)*100)/100).toLocaleString('en-US');
+  let cfg={}, D={items:[],recipes:[],moves:[]}, kind='in', rrows=[];
+  const MENU=(self.POS_DEFAULT_MENU||[]);
+  try{cfg=JSON.parse(localStorage.getItem('pos_report_cfg')||'{}')}catch(e){}
+
+  async function rpc(name,body){
+    if(!cfg.url||!cfg.key||!cfg.rtoken) throw new Error('ยังไม่ได้ตั้งค่าเชื่อมต่อ — ไปหน้ารายงาน → ตั้งค่า ก่อน');
+    const h={'Content-Type':'application/json',apikey:cfg.key}; if(/^eyJ/.test(cfg.key)) h.Authorization='Bearer '+cfg.key;
+    const res=await fetch(cfg.url.replace(/\/+$/,'')+'/rest/v1/rpc/'+name,{method:'POST',headers:h,body:JSON.stringify(Object.assign({p_branch:cfg.branch||'jlk',p_token:cfg.rtoken},body||{}))});
+    const t=await res.text();
+    if(!res.ok) throw new Error(res.status===403?'รหัสดูรายงานไม่ถูกต้อง':(res.status===404?'ยังไม่ได้รัน supabase_stock.sql ใน Supabase':'เซิร์ฟเวอร์ตอบ '+res.status+' '+t.slice(0,200)));
+    return t?JSON.parse(t):null;
+  }
+  const say=(t,ok)=>{const m=$('#msg');m.className=ok?'okm':'err';m.textContent=t||''; if(ok) setTimeout(()=>{if(m.textContent===t)m.textContent=''},2500)};
+
+  async function load(){
+    try{ D=await rpc('stock_overview'); say(''); draw(); }catch(e){ say(e.message); }
+  }
+  function draw(){
+    const act=D.items.filter(i=>i.active);
+    $('#bal').innerHTML='<tr><th>รายการ</th><th class="r">คงเหลือ</th><th class="r">ใช้วันนี้</th></tr>'+(act.length?act.map(i=>{
+      const low=+i.balance<=+i.min_level&&+i.min_level>0;
+      return `<tr><td>${esc(i.name)}${low?' <span class="tag low">ใกล้หมด</span>':''}<div class="mut">${i.last_count_at?'นับล่าสุด '+new Date(i.last_count_at).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'ยังไม่เคยนับ — ไปแท็บ บันทึก → นับจริง'}</div></td><td class="r ${low?'low':''}">${num(i.balance)} ${esc(i.unit)}</td><td class="r">${num(i.used_today)}</td></tr>`}).join(''):'<tr><td colspan="3" class="mut">ยังไม่มีรายการ — เพิ่มที่แท็บ รายการ/สูตร</td></tr>');
+    const K={in:'รับเข้า',count:'นับจริง',waste:'ของเสีย',adjust:'ปรับ'};
+    $('#hist').innerHTML=(D.moves||[]).map(m=>`<tr><td>${esc(m.name)}<div class="mut">${new Date(m.move_at).toLocaleString('th-TH',{timeZone:'Asia/Bangkok',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}${m.note?' · '+esc(m.note):''}</div></td><td>${K[m.kind]}</td><td class="r">${num(m.qty)} ${esc(m.unit)}</td><td class="r"><button class="d" data-del="${m.id}">ลบ</button></td></tr>`).join('')||'<tr><td class="mut">ยังไม่มีประวัติ</td></tr>';
+    const opts=act.map(i=>`<option value="${i.id}">${esc(i.name)} (${esc(i.unit)})</option>`).join('');
+    const keepM=$('#mItem').value, keepR=$('#rItem').value;
+    $('#mItem').innerHTML=opts; $('#rItem').innerHTML=opts;
+    if(keepM) $('#mItem').value=keepM; if(keepR) $('#rItem').value=keepR;
+    unit(); loadRecipes();
+  }
+  const HELP={in:'ของที่รับเข้ามาเพิ่ม (บวกเข้ายอด)',count:'จำนวนที่นับได้จริงตอนนี้ — ระบบจะใช้เป็นจุดเริ่มต้นใหม่ของยอดคงเหลือ',waste:'ของเสีย/ทิ้ง (หักออกจากยอด)',adjust:'ปรับยอด ใส่ + เพื่อเพิ่ม หรือ − เพื่อลด'};
+  function unit(){const i=D.items.find(x=>x.id==$('#mItem').value);$('#mUnit').textContent=i?'('+i.unit+')':'';$('#kindHelp').textContent=HELP[kind];}
+  function loadRecipes(){
+    const id=+$('#rItem').value;
+    rrows=D.recipes.filter(r=>r.stock_item_id===id).map(r=>({menu_code:r.menu_code,qty:r.qty}));
+    drawR();
+  }
+  function drawR(){
+    const menuOpts=c=>MENU.map(m=>`<option value="${esc(m.code)}"${m.code===c?' selected':''}>${esc(m.code)} ${esc(m.name)}</option>`).join('');
+    $('#rRows').innerHTML=rrows.length?rrows.map((r,i)=>`<div class="rrow"><select data-ri="${i}" data-f="menu_code">${menuOpts(r.menu_code)}</select><input data-ri="${i}" data-f="qty" type="number" step="any" value="${r.qty}"><button class="d" data-rd="${i}">×</button></div>`).join(''):'<p class="mut">ยังไม่มีสูตร</p>';
+  }
+
+  $('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));['over','move','set'].forEach(t=>$('#t-'+t).hidden=t!==b.dataset.t)};
+  $('#kinds').onclick=e=>{const b=e.target.closest('button');if(!b)return;kind=b.dataset.k;document.querySelectorAll('#kinds button').forEach(x=>x.classList.toggle('on',x===b));unit()};
+  $('#mItem').onchange=unit; $('#rItem').onchange=loadRecipes; $('#reload').onclick=load;
+  $('#mSave').onclick=async()=>{
+    const q=parseFloat($('#mQty').value); if(!$('#mItem').value||isNaN(q)){say('เลือกรายการและใส่จำนวน');return}
+    try{await rpc('stock_add_move',{p_item_id:+$('#mItem').value,p_kind:kind,p_qty:q,p_note:$('#mNote').value});$('#mQty').value='';$('#mNote').value='';await load();say('บันทึกแล้ว',true)}catch(e){say(e.message)}
+  };
+  $('#hist').onclick=async e=>{const b=e.target.closest('[data-del]');if(!b||!confirm('ลบรายการนี้?'))return;try{await rpc('stock_delete_move',{p_move_id:+b.dataset.del});await load()}catch(er){say(er.message)}};
+  $('#nSave').onclick=async()=>{
+    if(!$('#nName').value.trim()){say('ใส่ชื่อรายการ');return}
+    try{await rpc('stock_upsert_item',{p_item:{name:$('#nName').value.trim(),unit:$('#nUnit').value.trim()||'หน่วย',kind:$('#nKind').value,min_level:String($('#nMin').value||0)}});$('#nName').value='';$('#nUnit').value='';await load();say('เพิ่มรายการแล้ว',true)}catch(e){say(e.message)}
+  };
+  $('#rAdd').onclick=()=>{rrows.push({menu_code:(MENU[0]||{}).code||'',qty:1});drawR()};
+  $('#rRows').oninput=e=>{const t=e.target,i=t.dataset.ri;if(i==null)return;rrows[i][t.dataset.f]=t.dataset.f==='qty'?parseFloat(t.value):t.value};
+  $('#rRows').onclick=e=>{const b=e.target.closest('[data-rd]');if(!b)return;rrows.splice(+b.dataset.rd,1);drawR()};
+  $('#rSave').onclick=async()=>{
+    if(!$('#rItem').value){say('เลือกรายการสต็อกก่อน');return}
+    try{await rpc('stock_set_recipes',{p_item_id:+$('#rItem').value,p_rows:rrows.filter(r=>r.menu_code&&r.qty>0).map(r=>({menu_code:r.menu_code,qty:r.qty}))});await load();say('บันทึกสูตรแล้ว',true)}catch(e){say(e.message)}
+  };
+  load();
+})();
+</script>
+</body>
+</html>
