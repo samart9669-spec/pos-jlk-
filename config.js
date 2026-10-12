@@ -7,7 +7,7 @@
     branchId: 'jlk',           // รหัสสั้นของสาขาใน Supabase (ตรงกับ pos_branches.branch_id)
     deviceName: 'เครื่อง 1',
     supabaseUrl: 'https://ushqrnotlzotzqlcgcek.supabase.co',         // เช่น https://xxxx.supabase.co
-    apiKey: '',                // anon / publishable key (ไม่ใช่ service role)
+    apiKey: 'sb_publishable_D6TxJD0kIPcAvs7-4XG9qA_oW5Y0Qhf',              // anon / publishable key (ไม่ใช่ service role)
     token: '',                 // รหัสลับของสาขา (ตั้งใน supabase.sql)
     menuIsDummy: false
   };
