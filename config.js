@@ -43,6 +43,7 @@
     { n: 5, name: 'TRUE' },
     { n: 6, name: 'ShopeePay' },
     { n: 7, name: 'WeChat' },
-    { n: 8, name: 'AliPay' }
+    { n: 8, name: 'AliPay' },
+    { n: 9, name: 'Cash Card', f: true }   // จ่ายด้วยบัตร: กด F (ไม่ผ่าน D) แล้วแตะ/สแกนบัตร
   ];
 })(typeof self !== 'undefined' ? self : window);

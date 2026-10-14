@@ -78,9 +78,10 @@
       `<li class="stp${done.has(n) ? ' done' : ''}" data-s="${n}"><span class="sn">${n}</span><span class="row2">${keys}</span><span class="sl">${esc(label)}</span></li>`;
     $('#steps').innerHTML = es.map((e, n) =>
       stp(n + 1, `<span class="kc sm">${esc(e.m.keypad || '?')}</span><span class="kc sm e">E</span>${e.qty > 1 ? '<span class="x">×' + e.qty + '</span>' : ''}`, e.m.name)).join('') +
-      stp(es.length + 1, `<span class="kc sm d">D</span><span class="kc sm">${pay.n}</span>`, 'ชำระ ' + pay.name);
+      stp(es.length + 1, pay.f ? `<span class="kc sm f">F</span>` : `<span class="kc sm d">D</span><span class="kc sm">${pay.n}</span>`,
+        pay.f ? 'ชำระ ' + pay.name + ' · แตะ/สแกนบัตร' : 'ชำระ ' + pay.name);
     $('#pays').innerHTML = PAYS.map(p =>
-      `<button class="pay${p.n === pay.n ? ' on' : ''}" data-n="${p.n}"><b>${p.n}</b>${esc(p.name)}</button>`).join('');
+      `<button class="pay${p.n === pay.n ? ' on' : ''}" data-n="${p.n}"><b>${p.f ? 'F' : p.n}</b>${esc(p.name)}</button>`).join('');
     $('#total').textContent = baht(total);
     $('#save').disabled = !has;
     $('#clear').style.visibility = has ? 'visible' : 'hidden';
